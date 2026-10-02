@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="uk" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[назва компанії] — Сервісний центр та технічні рішення</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f6ff',
+                            100: '#e0edff',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            900: '#0f172a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Base page cursor styling */
+        body {
+            cursor: auto !important; /* System cursor remains fully visible */
+        }
+
+        a, button, input, textarea, [role="button"] {
+            cursor: pointer !important;
+        }
+
+        /* 1. Interactive Dual Cursor Effects */
+        .cursor-ring {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 32px;
+            height: 32px;
+            border: 2px solid rgba(56, 189, 248, 0.75);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate3d(-50%, -50%, 0);
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
+            transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease;
+        }
+
+        .cursor-dot {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 6px;
+            background-color: #0284c7;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate3d(-50%, -50%, 0);
+            box-shadow: 0 0 8px #38bdf8;
+        }
+
+        /* 2. Soft Radial Blur Zone around top-right camera */
+        .camera-blur-zone {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 210px;
+            height: 210px;
+            background: radial-gradient(circle at 100% 0%, rgba(15, 23, 42, 0.65) 0%, rgba(15, 23, 42, 0.2) 65%, transparent 100%);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            mask-image: radial-gradient(circle at 100% 0%, black 45%, transparent 85%);
+            -webkit-mask-image: radial-gradient(circle at 100% 0%, black 45%, transparent 85%);
+            pointer-events: none;
+            z-index: 40;
+            border-bottom-left-radius: 100%;
+        }
+
+        /* 3. Compact Dahua Eyeball Dome Camera (Reduced size ~40%) */
+        .dahua-camera-wrapper {
+            position: fixed;
+            top: 6px;
+            right: 12px;
+            width: 82px;
+            height: 92px;
+            z-index: 50;
+            pointer-events: none;
+            filter: drop-shadow(-3px 6px 12px rgba(0, 0, 0, 0.5));
+        }
+
+        /* Top White Mounting Ring Base */
+        .dahua-base {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 30px;
+            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 60%, #e2e8f0 100%);
+            border-top-left-radius: 40px 16px;
+            border-top-right-radius: 40px 16px;
+            border-bottom-left-radius: 8px 4px;
+            border-bottom-right-radius: 8px 4px;
+            box-shadow: inset 0 1px 2px #ffffff, inset 0 -1px 3px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid #cbd5e1;
+            z-index: 3;
+        }
+
+        /* Brand Text on White Base */
+        .dahua-brand {
+            font-size: 7.5px;
+            font-weight: 900;
+            color: #1e293b;
+            letter-spacing: -0.2px;
+            user-select: none;
+            margin-top: 1px;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+        }
+
+        /* Outer Curved Dark Eyeball Collar Holder */
+        .dahua-collar {
+            position: absolute;
+            top: 22px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 60px;
+            background: linear-gradient(180deg, #2b3036 0%, #1c2024 45%, #0f1215 100%);
+            border-bottom-left-radius: 30px 34px;
+            border-bottom-right-radius: 30px 34px;
+            border-top-left-radius: 10px 5px;
+            border-top-right-radius: 10px 5px;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.12), inset 0 -3px 6px rgba(0,0,0,0.8);
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        /* Inner Rotatable Dome Ball (Eyeball Sphere) */
+        .dahua-sphere {
+            position: absolute;
+            top: 2px;
+            left: 50%;
+            width: 58px;
+            height: 58px;
+            margin-left: -29px;
+            background: radial-gradient(circle at 38% 35%, #2a2e33 0%, #15181b 60%, #08090a 100%);
+            border-radius: 50%;
+            box-shadow: inset -2px -2px 6px rgba(0,0,0,0.8), inset 1px 1px 4px rgba(255,255,255,0.15);
+            transform-origin: 29px 29px; /* Perfect center pivot */
+            will-change: transform;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Front Camera Glass Window Cutout */
+        .dahua-lens-window {
+            position: absolute;
+            width: 37px;
+            height: 33px;
+            background: linear-gradient(165deg, #111315 0%, #050607 100%);
+            border-radius: 11px;
+            border: 1px solid #333940;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.9), 0 1px 2px rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Center Main Lens */
+        .dahua-lens-outer {
+            width: 17px;
+            height: 17px;
+            background: radial-gradient(circle, #1a202c 0%, #000000 100%);
+            border-radius: 50%;
+            border: 1px solid #2d3748;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 4px #000000;
+            position: relative;
+        }
+
+        .dahua-lens-glass {
+            width: 9px;
+            height: 9px;
+            background: radial-gradient(circle at 35% 35%, #60a5fa 0%, #1d4ed8 40%, #020617 85%);
+            border-radius: 50%;
+            box-shadow: 0 0 3px rgba(59, 130, 246, 0.5);
+            position: relative;
+        }
+
+        /* Glass Reflection Dot */
+        .dahua-lens-glass::after {
+            content: '';
+            position: absolute;
+            top: 1.5px;
+            left: 1.5px;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+        }
+
+        /* Left and Right IR LED Sensors */
+        .dahua-ir-sensor {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 5px;
+            height: 5px;
+            background: radial-gradient(circle, #1e293b 0%, #090d16 100%);
+            border-radius: 50%;
+            border: 1px solid #334155;
+            box-shadow: inset 0 0 2px rgba(0,0,0,0.8);
+        }
+
+        .dahua-ir-sensor.left { left: 3px; }
+        .dahua-ir-sensor.right { right: 3px; }
+
+        /* Microphone Pin Hole at Bottom */
+        .dahua-mic-hole {
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2.5px;
+            height: 2.5px;
+            background-color: #000000;
+            border-radius: 50%;
+            box-shadow: inset 0 1px 1px rgba(0,0,0,1);
+        }
+
+        /* Recording status LED indicator */
+        .dahua-status-led {
+            position: absolute;
+            top: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2.5px;
+            height: 2.5px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            box-shadow: 0 0 4px #ef4444;
+            animation: ledPulse 1.5s infinite;
+        }
+
+        @keyframes ledPulse {
+            0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
+            50% { opacity: 0.3; transform: translateX(-50%) scale(0.8); }
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #090d16; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-blue-600 selection:text-white overflow-x-hidden">
+
+    <!-- Custom Follower Cursors -->
+    <div class="cursor-ring" id="cursorRing"></div>
+    <div class="cursor-dot" id="cursorDot"></div>
+
+    <!-- Backdrop Blur Zone under camera -->
+    <div class="camera-blur-zone" aria-hidden="true"></div>
+
+    <!-- Compact Dahua Eyeball Dome Camera Replica -->
+    <div class="dahua-camera-wrapper" id="cameraWrapper" aria-hidden="true">
+        <!-- White Mounting Base -->
+        <div class="dahua-base">
+            <span class="dahua-brand">[назва компанії]</span>
+        </div>
+
+        <!-- Dark Curved Outer Collar Bracket -->
+        <div class="dahua-collar">
+            <!-- Rotatable Dome Eyeball Sphere -->
+            <div class="dahua-sphere" id="cameraDome">
+                <div class="dahua-lens-window">
+                    <div class="dahua-status-led"></div>
+                    <div class="dahua-ir-sensor left"></div>
+                    <div class="dahua-lens-outer">
+                        <div class="dahua-lens-glass"></div>
+                    </div>
+                    <div class="dahua-ir-sensor right"></div>
+                    <div class="dahua-mic-hole"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-30 bg-slate-900/80 backdrop-blur-md border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-3 group shrink-0">
+                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-blue-600/30 group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                </div>
+                <span class="text-xl sm:text-2xl font-black tracking-wider bg-gradient-to-r from-white via-slate-200 to-blue-400 bg-clip-text text-transparent">
+                    [НАЗВА КОМПАНІЇ]
+                </span>
+            </a>
+
+            <!-- Nav Links shifted nicely with right margin to clear the camera blur zone -->
+            <nav class="hidden lg:flex items-center gap-8 text-sm font-semibold text-slate-300 mr-4">
+                <a href="#services" class="hover:text-blue-400 transition-colors">Послуги</a>
+                <a href="#about" class="hover:text-blue-400 transition-colors">Про нас</a>
+                <a href="#features" class="hover:text-blue-400 transition-colors">Переваги</a>
+                <a href="#contact" class="hover:text-blue-400 transition-colors">Контакти</a>
+            </nav>
+
+            <!-- Order Button pushed leftwards with margin to remain fully visible under/near the blur zone -->
+            <div class="flex items-center gap-4 mr-24 sm:mr-28 lg:mr-32">
+                <a href="#contact" class="inline-flex items-center justify-center px-4 sm:px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs sm:text-sm transition-all shadow-lg shadow-blue-600/25 active:scale-95 whitespace-nowrap">
+                    Замовити консультацію
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="relative py-20 md:py-28 overflow-hidden">
+            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-slate-950 to-slate-950 -z-10"></div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="max-w-3xl">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold uppercase tracking-wider mb-6">
+                        <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
+                        Авторизований сервісний центр [назва компанії]
+                    </div>
+                    <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight leading-none mb-6">
+                        Надійний сервіс від <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">[назва компанії]</span>
+                    </h1>
+                    <p class="text-lg sm:text-xl text-slate-400 mb-8 leading-relaxed">
+                        Ми забезпечуємо професійне обслуговування, монтаж та налаштування технічних систем будь-якої складності із гарантією якості від [назва компанії].
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="#contact" class="inline-flex justify-center items-center px-8 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-base transition-all shadow-xl shadow-blue-600/30 hover:shadow-blue-500/50 hover:-translate-y-0.5">
+                            Замовити послугу в [назва компанії]
+                        </a>
+                        <a href="#services" class="inline-flex justify-center items-center px-8 py-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 font-semibold text-base transition-all">
+                            Наші послуги
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="py-20 bg-slate-900/50 border-y border-slate-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-2xl mx-auto mb-16">
+                    <h2 class="text-3xl font-bold text-white mb-4">Послуги від [назва компанії]</h2>
+                    <p class="text-slate-400">Команда [назва компанії] пропонує повний спектр сервісних та технічних робіт.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Service 1 -->
+                    <div class="p-8 rounded-2xl bg-slate-900 border border-slate-800 hover:border-blue-500/50 transition-all group hover:-translate-y-1">
+                        <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-xl mb-6 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                            <i class="fa-solid fa-video"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">Системи відеоспостереження</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">Професійний монтаж та налаштування купольних і поворотних камер від фахівців [назва компанії].</p>
+                        <span class="text-blue-400 font-semibold text-sm">Детальніше в [назва компанії] &rarr;</span>
+                    </div>
+
+                    <!-- Service 2 -->
+                    <div class="p-8 rounded-2xl bg-slate-900 border border-slate-800 hover:border-blue-500/50 transition-all group hover:-translate-y-1">
+                        <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-xl mb-6 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                            <i class="fa-solid fa-microchip"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">Діагностика та ремонт</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">Точна діагностика та якісне відновлення цифрової техніки у лабораторії [назва компанії].</p>
+                        <span class="text-blue-400 font-semibold text-sm">Детальніше в [назва компанії] &rarr;</span>
+                    </div>
+
+                    <!-- Service 3 -->
+                    <div class="p-8 rounded-2xl bg-slate-900 border border-slate-800 hover:border-blue-500/50 transition-all group hover:-translate-y-1">
+                        <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-xl mb-6 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">Комплексна безпека</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">Інтеграція систем контролю доступу та охоронної сигналізації від [назва компанії].</p>
+                        <span class="text-blue-400 font-semibold text-sm">Детальніше в [назва компанії] &rarr;</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h2 class="text-3xl font-bold text-white mb-6">Чому обирають [назва компанії]?</h2>
+                        <div class="space-y-6">
+                            <div class="flex gap-4">
+                                <div class="w-10 h-10 rounded-lg bg-blue-600/20 text-blue-400 flex items-center justify-center shrink-0 font-bold">1</div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-white">Досвід [назва компанії]</h4>
+                                    <p class="text-slate-400 text-sm mt-1">Сертифіковані інженери та майстри з багаторічним стажем роботи у [назва компанії].</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-10 h-10 rounded-lg bg-blue-600/20 text-blue-400 flex items-center justify-center shrink-0 font-bold">2</div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-white">Офіційна гарантія</h4>
+                                    <p class="text-slate-400 text-sm mt-1">Гарантійне та післягарантійне обслуговування від сервісного центру [назва компанії].</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-10 h-10 rounded-lg bg-blue-600/20 text-blue-400 flex items-center justify-center shrink-0 font-bold">3</div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-white">Швидкий результат</h4>
+                                    <p class="text-slate-400 text-sm mt-1">Мінімальні терміни виконання замовлень без втрати якості в [назва компанії].</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative bg-gradient-to-br from-slate-900 to-slate-800 p-8 rounded-3xl border border-slate-800 shadow-xl">
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center pb-4 border-b border-slate-800">
+                                <span class="text-slate-400">Виконаних робіт в [назва компанії]</span>
+                                <span class="text-2xl font-bold text-blue-400">2,400+</span>
+                            </div>
+                            <div class="flex justify-between items-center pb-4 border-b border-slate-800">
+                                <span class="text-slate-400">Задоволених клієнтів</span>
+                                <span class="text-2xl font-bold text-blue-400">99.6%</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-400">Підтримка користувачів [назва компанії]</span>
+                                <span class="text-2xl font-bold text-blue-400">24/7</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-20 bg-slate-900/50 border-t border-slate-800">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 sm:p-12 shadow-2xl">
+                    <h2 class="text-3xl font-bold text-white text-center mb-2">Надіслати заявку в [назва компанії]</h2>
+                    <p class="text-slate-400 text-center mb-8">Заповніть форму, і наш спеціаліст з [назва компанії] зв'яжеться з вами.</p>
+                    
+                    <form id="contactForm" class="space-y-6">
+                        <div class="grid sm:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-2">Ваше ім'я</label>
+                                <input type="text" required placeholder="Іван" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500 transition-colors">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-2">Телефон</label>
+                                <input type="tel" required placeholder="+380 (99) 000-00-00" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500 transition-colors">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">Деталі для [назва компанії]</label>
+                            <textarea rows="4" placeholder="Напишіть, яка послуга від [назва компанії] вас цікавить..." class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500 transition-colors"></textarea>
+                        </div>
+                        <button type="submit" class="w-full py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold transition-all shadow-lg shadow-blue-600/25 active:scale-95">
+                            Відправити в [назва компанії]
+                        </button>
+                    </form>
+
+                    <div id="formSuccess" class="hidden mt-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-center font-medium">
+                        <i class="fa-solid fa-circle-check mr-2"></i> Ваше повідомлення для [назва компанії] успішно відправлено!
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="py-8 bg-slate-950 border-t border-slate-900 text-center text-sm text-slate-500">
+        <p>© 2026 [назва компанії]. Всі права захищено.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cameraDome = document.getElementById('cameraDome');
+            const cursorRing = document.getElementById('cursorRing');
+            const cursorDot = document.getElementById('cursorDot');
+
+            // Mouse position state
+            let mouseX = window.innerWidth / 2;
+            let mouseY = window.innerHeight / 2;
+
+            // Follower cursor lerp coordinates
+            let ringX = mouseX;
+            let ringY = mouseY;
+            let dotX = mouseX;
+            let dotY = mouseY;
+
+            // Dahua Eyeball rotational angle states
+            let currentAngle = 0;
+            let targetAngle = 0;
+
+            // Speeds
+            const ringSpeed = 0.22;  // Outer ring follows cursor faster
+            const dotSpeed = 0.08;   // Inner dot trails behind with larger delay
+            const cameraLerpSpeed = 0.07; // Smooth lerp rotation for camera dome
+
+            // Track mouse/touch movement
+            window.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                updateCameraTarget(mouseX, mouseY);
+            });
+
+            window.addEventListener('touchmove', (e) => {
+                if (e.touches && e.touches[0]) {
+                    mouseX = e.touches[0].clientX;
+                    mouseY = e.touches[0].clientY;
+                    updateCameraTarget(mouseX, mouseY);
+                }
+            });
+
+            // Calculate rotational angle for the Dahua Dome Eyeball
+            function updateCameraTarget(clientX, clientY) {
+                if (!cameraDome) return;
+
+                const rect = cameraDome.getBoundingClientRect();
+                // Pivot center of the sphere
+                const pivotX = rect.left + rect.width / 2;
+                const pivotY = rect.top + rect.height / 2;
+
+                const deltaX = clientX - pivotX;
+                const deltaY = clientY - pivotY;
+
+                // Radian to Degrees
+                let angleRad = Math.atan2(deltaY, deltaX);
+                let angleDeg = angleRad * (180 / Math.PI);
+
+                // Offset angle so default orientation points downwards (90°)
+                let offsetAngle = angleDeg - 90;
+
+                // Normalize angle to range [-180, 180]
+                while (offsetAngle > 180) offsetAngle -= 360;
+                while (offsetAngle < -180) offsetAngle += 360;
+
+                // Clamp to 320 degrees total range (-160° to +160°)
+                const maxAngle = 160;
+                targetAngle = Math.max(-maxAngle, Math.min(maxAngle, offsetAngle));
+            }
+
+            // Main Animation Frame loop
+            function renderFrame() {
+                // 1. Dual Cursor Lerp
+                ringX += (mouseX - ringX) * ringSpeed;
+                ringY += (mouseY - ringY) * ringSpeed;
+
+                dotX += (mouseX - dotX) * dotSpeed;
+                dotY += (mouseY - dotY) * dotSpeed;
+
+                if (cursorRing) {
+                    cursorRing.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
+                }
+
+                if (cursorDot) {
+                    cursorDot.style.transform = `translate3d(${dotX}px, ${dotY}px, 0) translate(-50%, -50%)`;
+                }
+
+                // 2. Dome Camera Smooth Rotational Tracking (up to 320°)
+                currentAngle += (targetAngle - currentAngle) * cameraLerpSpeed;
+
+                if (cameraDome) {
+                    cameraDome.style.transform = `rotate(${currentAngle}deg)`;
+                }
+
+                requestAnimationFrame(renderFrame);
+            }
+
+            // Start animation loop
+            renderFrame();
+
+            // Hover state expansions for cursor
+            const interactiveEls = document.querySelectorAll('a, button, input, textarea');
+            interactiveEls.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    if (cursorRing) {
+                        cursorRing.style.width = '42px';
+                        cursorRing.style.height = '42px';
+                        cursorRing.style.borderColor = '#60a5fa';
+                    }
+                });
+                el.addEventListener('mouseleave', () => {
+                    if (cursorRing) {
+                        cursorRing.style.width = '32px';
+                        cursorRing.style.height = '32px';
+                        cursorRing.style.borderColor = 'rgba(56, 189, 248, 0.75)';
+                    }
+                });
+            });
+
+            // Contact Form handler
+            const form = document.getElementById('contactForm');
+            const successMsg = document.getElementById('formSuccess');
+
+            if (form) {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    form.reset();
+                    if (successMsg) {
+                        successMsg.classList.remove('hidden');
+                        setTimeout(() => {
+                            successMsg.classList.add('hidden');
+                        }, 5000);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
